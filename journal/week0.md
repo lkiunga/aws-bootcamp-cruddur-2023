@@ -22,6 +22,9 @@ I worked on the budgets bit using aws console, and created a zero spend budget t
 *** Insert image
 
 ### Cruddur Architectural Diagram
+Cruddur Architecture Diagram drawn out using Lucid chart
+*** insert image
+** Insert Link
 
 ### Knowledge Challenges
 I went through the videos on pricing considerations and security consideration. afterwards I completed the quizes
