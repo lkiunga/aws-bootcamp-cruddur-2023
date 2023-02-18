@@ -3,6 +3,7 @@ Contains an outline of all the tasks have been able to submit
 ## Required HomeWork/Tasks 
 ### Install and verify AWS CLI
 I installed the AWS CLI using the instructions from the outline
+![AWS CLI installed](/assets/Week0-Working AWSCLI proof.png)
 
 **insert image of prove** 
 
