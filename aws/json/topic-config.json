@@ -1,0 +1,3 @@
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:997272838836:CB-billing-alarms \
+    --protocol email \
+    --notification-endpoint li********@gmail.com
