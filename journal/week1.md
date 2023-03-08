@@ -7,30 +7,29 @@ THis was really helpful, I loved the advice made that you need to first show eff
 ### Containerize Application (Dockerfiles, Docker Compose)
 I was able to containerize both the frontend and backend applications by creating docker files. 
 I was able to create a compose file and run the app as a multi container - this was a really cool feature. The docker compose feature is especially useful in that it supports variables and moving composition between environments.
-
-*** Add image
-
+![ Docker Compose file](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Week1-docker-compose-file.png)
+Docker Compose UP with all point open and public
+![ Docker Compose Up](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Week1-docker-compose-up.png)
 
 ### Document the Notification Endpoint for the OpenAI Document
 I was able to use Open AI swagger UI to visualize some of the compnents we built for the api/activities/notifications endpoint
-
-*** insert image
+![OPENIA SWAGGGER](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/OpenAI%20swagger.png)
 
 ### Write a Flask Backend Endpoint for Notifications
 I was able to add a backend Endpoint and addmy sample of "coco" interface
 
-** insert image
+![Backend Endpoint](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Backendpoint-notification%20endpoint.png)
 
 ### Write a React Page for Notifications
 I added the notifications Feedpage and understand the working of react js and how it utilizes routes to establishes links to the different services and componenets on the frontend.
 
-** insert image
+![Frontend Endpoint](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Frontend-endpoint.png)
 
 ###  Run DynamoDB Local Container and ensure it works
 I installed dynamo db by adding the required documentation on the compose up file.
- THe dynamo db install was succesful and I was able to replicate the 100DaysofCloudChallenge
- 
- ** insert image
+THe dynamo db install was succesful and I was able to replicate the 100DaysofCloudChallenge
+
+![Dynamo Create Table](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Dynamo%20items.png)
 
 ### Run Postgres Container and ensure it works	
 I was able to install postgresSql and run the commands. I used `psql -h localhost -U postgress` to get access to the postgress DB
