@@ -11,10 +11,10 @@ Think of it like a microscope that helps you examine the inner workings of your 
 OpenTelemetry (OTEL) is a tool that acts like a fitness tracker for software applications, collecting data on how the application is performing. This helps developers optimize the application's speed and efficiency, and troubleshoot issues for a better user experience.
 #### How does Honeycomb and OpenTelemetry(OTEL) work together
 OTEL collects data about how the application is performing, while Honeycomb provides a platform for analyzing and visualizing that data in real-time.  OpenTelemetry exporter allows you to send your performance data to Honeycomb. Once the data is in Honeycomb, you can use its powerful analytics and visualization tools to gain deep insights into how your application is performing. You can create custom dashboards to track key performance metrics, set up alerts to notify you when issues arise, and collaborate with your team to quickly resolve any problems.
-### Setup OpenTelemetry on the application
+#### Setup OpenTelemetry on the application
 add the following to the `requirements.txt`
 
-'''
+```
 opentelemetry-api 
 opentelemetry-sdk 
 opentelemetry-exporter-otlp-proto-http 
@@ -52,6 +52,7 @@ tracer = trace.get_tracer(__name__)
 ### Configure and provision X-Ray daemon within docker-compose and send data back to X-Ray API
 ### Observe X-Ray traces within the AWS Console
 ### Integrate Rollbar for Error Logging
+
 Add to `requirements.txt`
 ```
 blinker
