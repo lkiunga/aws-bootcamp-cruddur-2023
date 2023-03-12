@@ -207,6 +207,11 @@ Let's say you have a microservice architecture deployed in AWS, where several mi
  -However, if you want to understand the flow of requests through your microservices and identify any issues, you can use AWS X-Ray. For example, you can use X-Ray to trace a specific request as it travels through your microservices, and see how long each service takes to process the request. You can also see any errors or exceptions that occur during the request processing, and drill down into the root cause of the problem.
  
 ### Integrate Rollbar for Error Logging
+Rollbar is an error tracking and monitoring tool that helps software development teams to identify and fix issues in their applications quickly.
+Real Life Example case :
+Let's say you are a software development team working on an e-commerce platform. Your application is used by thousands of customers every day to buy and sell products. One day, you notice that your error rates are increasing, and some customers are reporting issues with the checkout process. With Rollbar, you can quickly identify and diagnose the issue. You can see that there is a new error occurring in the checkout process, and Rollbar provides detailed information about the error, including the stack trace and any relevant user data. You can also see that this error is affecting a significant number of customers. Using this information, you can quickly diagnose and fix the issue. You can deploy a hotfix to your application code, and Rollbar will track the deployment and provide insights into how it impacts your error rates and performance.
+
+In Cruddur, we are using it to identify errrors we will get in production and Rollbar will help us track the source of error.
 
 Add to `requirements.txt`
 ```
