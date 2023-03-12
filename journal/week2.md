@@ -13,7 +13,6 @@ OpenTelemetry (OTEL) is a tool that acts like a fitness tracker for software app
 OTEL collects data about how the application is performing, while Honeycomb provides a platform for analyzing and visualizing that data in real-time.  OpenTelemetry exporter allows you to send your performance data to Honeycomb. Once the data is in Honeycomb, you can use its powerful analytics and visualization tools to gain deep insights into how your application is performing. You can create custom dashboards to track key performance metrics, set up alerts to notify you when issues arise, and collaborate with your team to quickly resolve any problems.
 #### Setup OpenTelemetry on the application
 add the following to the `requirements.txt`
-
 ```
 opentelemetry-api 
 opentelemetry-sdk 
@@ -65,7 +64,7 @@ export HONEYCOMB_SERVICE_NAME="backend-flask"
 gp env HONEYCOMB_API_KEY=""
 gp env HONEYCOMB_SERVICE_NAME="backend-flask"
 ```
-** insert Image for HoneyComb Dashboard
+![Honeycomb Dashboard](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-honeycomb-dashboard.png)
 ### Run queries to explore traces within Honeycomb.io
 Honeycomb has a powerful set of query capabilities that allow you to explore and analyze your data in a variety of ways. Here are some of the key capabilities:
 1. Advanced filtering: Honeycomb allows you to filter your data based on multiple criteria, including time ranges, values in specific columns, and complex logical expressions.
@@ -74,8 +73,7 @@ Honeycomb has a powerful set of query capabilities that allow you to explore and
 4. Visualization: You can visualize your query results using a variety of chart types, including line charts, bar charts, and heatmaps.
 5. Saved queries: You can save your queries and share them with other members of your team, allowing you to collaborate and gain insights together.
 6. Alerts: Honeycomb allows you to set up alerts based on specific query results, so you can be notified when certain conditions are met.
-
-** insert image of sample honeycomb query
+![HoneyComb Queries](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-running-queries-on-honeycom.png)
 ### Instrument AWS X-Ray into backend flask application
 AWS X-Ray is a powerful tool for developers working in a microservices architecture. AWS X-Ray is a distributed tracing service that helps developers analyze and debug applications in a microservices architecture. With AWS X-Ray, developers can trace requests made to their application as they travel across different services, identify performance bottlenecks and errors, and visualize the end-to-end architecture of their application.
 steps to Instrument AWS X-Ray for flask
@@ -153,6 +151,8 @@ AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
 ### Observe X-Ray traces within the AWS Console
 ** insert image
 The AWS X-ray keeps logging to cloud watch but after a couple refresh it opens the old AWS XRay interface.
+![AWS X-Ray service map on AWS console](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-aws-xray-service-maps.png)
+![AWSx-Ray Trace routes](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-aws-xray-traces-map.png)
 ### Integrate CloudWatch Logs
 
 Add to `requirements.txt`
@@ -197,8 +197,9 @@ Set the env var in your backend-flask for `docker-compose.yml`
  AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
  AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
  ```
- **insert images
- #### Understanding the use case of AWS CloudWatcg vs AWS X-Ray
+![cloudWatch Dashboard LogGroups](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-aws-cloudwatch-log_group-cruddur.png)
+![cloudWatch Dashboard Log Events](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-aws-cloudwatch-log-events.png)
+ #### Understanding the use case of AWS CloudWatch vs AWS X-Ray
 
 Let's say you have a microservice architecture deployed in AWS, where several microservices interact with each other to fulfill requests. You want to monitor the performance of the system and identify any bottlenecks or errors.
 
@@ -263,6 +264,6 @@ def rollbar_test():
 ### Trigger an error an observe an error with Rollbar
 Simulate an error by Commenting out`return` on the Homeactivities function.
 The error is visible on rollbar and we can be able to debug it from here. THis is especially useful when debugging in production since Debugging isset to false in production mode.
-**** Add rolebar GUI image
+![Rollbar Gui Inteface](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week2-rollbar-return-error.png)
 ### Install WatchTower and write a custom logger to send application log data to - CloudWatch Log group
 
