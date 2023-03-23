@@ -222,3 +222,192 @@ import { Auth } from 'aws-amplify';
 ```
 **insert image
 
+## Verify JWT token server side
+A JSON Web Token, or JWT, is an open standard for securely creating and sending data between two parties, usually a client and a server.</br>
+JWTs are usually used to manage user sessions on a website. While they're an important part of the token based authentication process, **JWTs themselves are used for authorization, not authentication.**</br>
+** insert image 
+For better understanding I refernced this material
+[How to Sign and Validate JSON Web Tokens – JWT Tutorial](https://www.freecodecamp.org/news/how-to-sign-and-validate-json-web-tokens/#:~:text=This%20process%20is%20called%20authorization,it%20sends%20back%20a%20response.)</br>
+#### For the CRUDDUR APP to verify the JWT token on the server side</br>
+**1. Add the following into the `requirements.txt` file and install the new requirements**
+```
+Flask-AWSCognito
+```
+**2.Create a new folder called `lib` and in it create a file called `cognito_jwt_token.py`.**</br>
+- copy the following code into it 
+```python
+import time
+import requests
+from jose import jwk, jwt
+from jose.exceptions import JOSEError
+from jose.utils import base64url_decode
+
+class FlaskAWSCognitoError(Exception):
+  pass
+
+class TokenVerifyError(Exception):
+  pass
+
+def extract_access_token(request_headers):
+    access_token = None
+    auth_header = request_headers.get("Authorization")
+    if auth_header and " " in auth_header:
+        _, access_token = auth_header.split()
+    return access_token
+
+class CognitoJwtToken:
+    def __init__(self, user_pool_id, user_pool_client_id, region, request_client=None):
+        self.region = region
+        if not self.region:
+            raise FlaskAWSCognitoError("No AWS region provided")
+        self.user_pool_id = user_pool_id
+        self.user_pool_client_id = user_pool_client_id
+        self.claims = None
+        if not request_client:
+            self.request_client = requests.get
+        else:
+            self.request_client = request_client
+        self._load_jwk_keys()
+
+
+    def _load_jwk_keys(self):
+        keys_url = f"https://cognito-idp.{self.region}.amazonaws.com/{self.user_pool_id}/.well-known/jwks.json"
+        try:
+            response = self.request_client(keys_url)
+            self.jwk_keys = response.json()["keys"]
+        except requests.exceptions.RequestException as e:
+            raise FlaskAWSCognitoError(str(e)) from e
+
+    @staticmethod
+    def _extract_headers(token):
+        try:
+            headers = jwt.get_unverified_headers(token)
+            return headers
+        except JOSEError as e:
+            raise TokenVerifyError(str(e)) from e
+
+    def _find_pkey(self, headers):
+        kid = headers["kid"]
+        # search for the kid in the downloaded public keys
+        key_index = -1
+        for i in range(len(self.jwk_keys)):
+            if kid == self.jwk_keys[i]["kid"]:
+                key_index = i
+                break
+        if key_index == -1:
+            raise TokenVerifyError("Public key not found in jwks.json")
+        return self.jwk_keys[key_index]
+
+    @staticmethod
+    def _verify_signature(token, pkey_data):
+        try:
+            # construct the public key
+            public_key = jwk.construct(pkey_data)
+        except JOSEError as e:
+            raise TokenVerifyError(str(e)) from e
+        # get the last two sections of the token,
+        # message and signature (encoded in base64)
+        message, encoded_signature = str(token).rsplit(".", 1)
+        # decode the signature
+        decoded_signature = base64url_decode(encoded_signature.encode("utf-8"))
+        # verify the signature
+        if not public_key.verify(message.encode("utf8"), decoded_signature):
+            raise TokenVerifyError("Signature verification failed")
+
+    @staticmethod
+    def _extract_claims(token):
+        try:
+            claims = jwt.get_unverified_claims(token)
+            return claims
+        except JOSEError as e:
+            raise TokenVerifyError(str(e)) from e
+
+    @staticmethod
+    def _check_expiration(claims, current_time):
+        if not current_time:
+            current_time = time.time()
+        if current_time > claims["exp"]:
+            raise TokenVerifyError("Token is expired")  # probably another exception
+
+    def _check_audience(self, claims):
+        # and the Audience  (use claims['client_id'] if verifying an access token)
+        audience = claims["aud"] if "aud" in claims else claims["client_id"]
+        if audience != self.user_pool_client_id:
+            raise TokenVerifyError("Token was not issued for this audience")
+
+    def verify(self, token, current_time=None):
+        """ https://github.com/awslabs/aws-support-tools/blob/master/Cognito/decode-verify-jwt/decode-verify-jwt.py """
+        if not token:
+            raise TokenVerifyError("No token provided")
+
+        headers = self._extract_headers(token)
+        pkey_data = self._find_pkey(headers)
+        self._verify_signature(token, pkey_data)
+
+        claims = self._extract_claims(token)
+        self._check_expiration(claims, current_time)
+        self._check_audience(claims)
+
+        self.claims = claims 
+        return claims
+```
+*  This code provides a Flask extension for verifying JWT tokens issued by AWS Cognito User Pools.</br>
+*  The **CognitoJwtToken** class is responsible for loading the public JWK keys from the Cognito User Pool and providing a verify() method to verify the JWT token's signature, expiration, and audience.</br>
+*  The **verify()** method takes a JWT token as input and verifies its signature using the public key from the JWK keys. It then extracts the claims from the JWT token and checks for expiration and audience (the client ID of the user pool). If the token passes all these checks, the claims are stored in the **self.claims** attribute of the instance and returned.
+
+* The **extract_access_token** function is a utility function to extract the access token from the request headers.
+
+* The **TokenVerifyError and FlaskAWSCognitoError** exceptions are defined for handling errors during the verification process.</br>
+
+**3. To verify whether the JWT tokens are working, add the folowing code to the `home_activities.py` **
+
+```python
+if cognito_user_id != None:
+        extra_crud = {
+          'uuid': '248959df-3079-4947-b847-9e0892d1bab4',
+          'handle':  'Lore',
+          'message': 'My dear brother, it the humans that are the problem',
+          'created_at': (now - timedelta(hours=1)).isoformat(),
+          'expires_at': (now + timedelta(hours=12)).isoformat(),
+          'likes': 1042,
+          'replies': []
+        }
+        results.insert(0,extra_crud)
+
+```
+The above code checks for the `cognito_user_id`, if provided it will show the above comment on the user feed for the particulat authenticated user.</br>
+If Null - the `home_activities.py` will show only the static content approved for all users</br>
+** insert image </br>
+
+**4. Add the following code to the file `app.py`**
+
+```python
+# On the imports
+from flask_cors import CORS, cross_origin
+#It uses Flask-CORS to allow cross-origin resource sharing 
+from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError
+# after app = Flask(__name__)
+#set JWT env variables
+cognito_jwt_token = CognitoJwtToken(
+  user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"), 
+  user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"),
+  region=os.getenv("AWS_DEFAULT_REGION")
+)
+#set CORS - honestly struggling to understnad the concept on CORS
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+
+```
+ - - - -
+
+
+
+
+
+
+
