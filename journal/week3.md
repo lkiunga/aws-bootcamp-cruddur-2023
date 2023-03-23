@@ -1,35 +1,34 @@
 # Week 3 — Decentralized Authentication
 
 ## Amazon Cognito
-**Amazon Cognito** is a cloud-based authentication, authorization, and user management service provided by Amazon Web Services (AWS). It is designed to help developers build web and mobile applications that require user sign-up, sign-in, and access control.
+**Amazon Cognito** is a cloud-based authentication, authorization, and user management service provided by Amazon Web Services (AWS). It is designed to help developers build web and mobile applications that require user sign-up, sign-in, and access control.</br>
 
-With Amazon Cognito, developers can easily add authentication and user management to their applications, and enable their users to sign-up and sign-in with a range of identity providers such as Amazon, Facebook, Google, and others. Additionally, developers can use Amazon Cognito to manage user profiles, including attributes like phone numbers, email addresses, and user preferences.
+With Amazon Cognito, developers can easily add authentication and user management to their applications, and enable their users to sign-up and sign-in with a range of identity providers such as Amazon, Facebook, Google, and others. Additionally, developers can use Amazon Cognito to manage user profiles, including attributes like phone numbers, email addresses, and user preferences.</br>
 
-Amazon Cognito also provides features to help developers control access to their resources, such as providing temporary credentials to access AWS services, or creating fine-grained access control policies to restrict user access to specific application resources.
+Amazon Cognito also provides features to help developers control access to their resources, such as providing temporary credentials to access AWS services, or creating fine-grained access control policies to restrict user access to specific application resources.</br>
 
 *Overall, Amazon Cognito simplifies the development process for web and mobile applications that require user authentication and management, and provides a secure and scalable solution for managing user identities and access control.
 There are several similar services in the market that provide authentication, authorization, and user management functionalities similar to Amazon Cognito. Some examples include:*
 
- *1. Auth0: Auth0 is a cloud-based identity platform that offers user authentication, authorization, and user management services for web, mobile, and IoT applications. It provides features such as social identity providers, multi-factor authentication, and customizable login pages.*
-*2. Okta: Okta is a cloud-based identity and access management platform that offers features such as single sign-on, multi-factor authentication, and user provisioning. It supports a range of identity providers and offers integration with enterprise systems such as Active Directory.*
-*3. Firebase Authentication: Firebase Authentication is a cloud-based service provided by Google that offers user authentication and authorization for web and mobile applications. It supports a range of authentication providers and offers features such as email verification and custom user attributes.*
-*4. Azure Active Directory: Azure Active Directory is a cloud-based identity and access management service provided by Microsoft. It offers features such as single sign-on, multi-factor authentication, and access control policies for enterprise applications.*
+  * Auth0: Auth0 is a cloud-based identity platform that offers user authentication, authorization, and user management services for web, mobile, and IoT applications. It provides features such as social identity providers, multi-factor authentication, and customizable login pages.
+  * Okta: Okta is a cloud-based identity and access management platform that offers features such as single sign-on, multi-factor authentication, and user provisioning. It supports a range of identity providers and offers integration with enterprise systems such as Active Directory.
+  * Firebase Authentication: Firebase Authentication is a cloud-based service provided by Google that offers user authentication and authorization for web and mobile applications. It supports a range of authentication providers and offers features such as email verification and custom user attributes.
+  * Azure Active Directory: Azure Active Directory is a cloud-based identity and access management service provided by Microsoft. It offers features such as single sign-on, multi-factor authentication, and access control policies for enterprise applications.
 
-Example of Amzon Cognito Usecase Scenario
-Serverless application authentication: A developer builds a serverless application using AWS Lambda functions and API Gateway. By using Amazon Cognito, the developer can secure their application's endpoints and ensure that only authenticated users can access the application's resources.
+Example of Amazon Cognito Usecase Scenario</br>
+    - Serverless application authentication: A developer builds a serverless application using AWS Lambda functions and API Gateway. By using Amazon Cognito, the developer can secure their application's endpoints and ensure that only authenticated users can access the application's resources.
 
 ## Implenting Amazon Cognito into our Cruddur Application
 ### creating User pools
-I cretaed a user pool from the AWS console and followed the prompts illlustrated in the videos.
+I created a user pool from the AWS console and followed the prompts illlustrated in the videos.
 ### Configure Amplify
-**Backend as a Service (BaaS)** is a cloud computing model where third-party vendors provide backend services to application developers. This means that developers do not need to build and maintain their own backend infrastructure and can instead rely on the BaaS provider to handle backend services such as data storage, authentication, and push notifications.
+**Backend as a Service (BaaS)** is a cloud computing model where third-party vendors provide backend services to application developers. This means that developers do not need to build and maintain their own backend infrastructure and can instead rely on the BaaS provider to handle backend services such as data storage, authentication, and push notifications.</br>
 In the case of AWS Amplify, the BaaS offerings include services such as:
-
 1. User authentication: Amplify provides user authentication services that enable developers to add sign-up, sign-in, and user profile management capabilities to their applications without having to build and maintain their own authentication infrastructure.
 2. Database management: Amplify provides managed database services such as Amazon DynamoDB and Amazon Aurora Serverless that allow developers to store and manage data in the cloud without having to set up and maintain their own database infrastructure.
 3. File storage: Amplify provides file storage services such as Amazon S3 and Amazon Glacier that enable developers to store and manage files in the cloud without having to build and maintain their own file storage infrastructure.
 
-Configuring AWS Amplify
+Configuring AWS Amplify</br>
 We need to hook up our cognito pool to our code in the `App.js`
 ```js
 import { Amplify } from 'aws-amplify';
@@ -83,7 +82,7 @@ const checkAuth = async () => {
   .catch((err) => console.log(err));
 };
 ```
-Remain instructions are already implemented
+Remain instructions are already implemented</br>
 Edit `ProfileInfo.js` to add the following
 ```js
 import { Auth } from 'aws-amplify';
@@ -119,7 +118,7 @@ const onsubmit = async (event) => {
     return false
   }
 ```
-Encountered a null pointer error due to jwt tokens were not configured. To acheive a sign in visual as below create the user using the cosole with the follwoing AWS Amplify command
+Encountered a null pointer error due to jwt tokens were not configured. To acheive a sign in visual as below create the user using the console with the follwoing AWS Amplify command
 ```aws
 aws cognito-idp admin-set-user-password 
   --username lina 
@@ -404,7 +403,29 @@ cors = CORS(
 
 ```
  - - - -
+# Homework Challenges
+## Improving UI Contrast and Implementing CSS Variables for Theming 
+Create CSS variables to enable uniform changes on the theming of the application for better visibility on windows machine.</br>
+- **create css varables on the `index.css` page and update the codes of the background section bellow**
+```
+:root {
+  --bg: rgb(61,13,123);
+  --fg: rgb(8,1,14);
 
+  --field-border: rgb(255,255,255,0.29);
+  --field-border-focus: rgb(149,0,255,1);
+  --field-bg: rgb(31,31,31);
+}
+```
+-update the code of the following files 
+* Desktopsidebar.css
+* Signuppage.css
+* SignInpage.css
+* Activityitem.css
+* joinsection.css
+* search.css
+
+ - - - -
 
 
 
