@@ -126,7 +126,7 @@ aws cognito-idp admin-set-user-password
   --user-pool-id us-east-1_iTi7xngE0 
   --permanent
 ```
-**insert image
+![Signin Page working with manually created user](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Week3-signin-page-working-with-manually-created-user.png)
 ## Implement Custom Signup Page
 Delete the manually created user and setup a Sign Up page from the AWS Cognito Console page
 update the `SignupPage.js` file with the following code
@@ -159,7 +159,8 @@ const onsubmit = async (event) => {
   return false
 }
 ```
-**insertimage
+![SignUp page with the additional Parameter](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week3-sign-up-page-working.png)
+![Verified user after SIGN up](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Week3-sign-up-image-confirmed.png)
 update `ConfirmationPage.js` page with the following code
 ```js
 const resend_code = async (event) => {
@@ -193,7 +194,7 @@ const resend_code = async (event) => {
     return false
   }
 ```
-**insert image
+![]()
 update `RecoveryPage.js` page with the following code
 ```js
 import { Auth } from 'aws-amplify';
@@ -219,12 +220,13 @@ import { Auth } from 'aws-amplify';
     return false
   }
 ```
-**insert image
-
+![Recovery Email Working](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week3-resendActivation-email.png)
+![Verified working accounts for users](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/Week3-sign-up-image-confirmed.png)
+![Successful Login for user](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week3-user-account-working-succesful.png)
 ## Verify JWT token server side
 A JSON Web Token, or JWT, is an open standard for securely creating and sending data between two parties, usually a client and a server.</br>
 JWTs are usually used to manage user sessions on a website. While they're an important part of the token based authentication process, **JWTs themselves are used for authorization, not authentication.**</br>
-** insert image 
+![JWT working](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week3-how-JWT-works.png)
 For better understanding I refernced this material
 [How to Sign and Validate JSON Web Tokens – JWT Tutorial](https://www.freecodecamp.org/news/how-to-sign-and-validate-json-web-tokens/#:~:text=This%20process%20is%20called%20authorization,it%20sends%20back%20a%20response.)</br>
 #### For the CRUDDUR APP to verify the JWT token on the server side</br>
@@ -376,7 +378,7 @@ if cognito_user_id != None:
 ```
 The above code checks for the `cognito_user_id`, if provided it will show the above comment on the user feed for the particulat authenticated user.</br>
 If Null - the `home_activities.py` will show only the static content approved for all users</br>
-** insert image </br>
+![showwing authenitaced session showing the new added activity](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week3-sessions-at-play.png)
 
 **4. Add the following code to the file `app.py`**
 
@@ -400,8 +402,25 @@ cors = CORS(
   expose_headers='Authorization',
   methods="OPTIONS,GET,HEAD,POST"
 )
-
+#rebuild this fuction - still in implemtation stages - 
+#we can prove JWT is happening but we need to pass  the message securely
+def data_home():
+  access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    # authenicatied request
+    app.logger.debug("authenicated")
+    app.logger.debug(claims)
+    app.logger.debug(claims['username'])
+    data = HomeActivities.run(cognito_user_id=claims['username'])
+  except TokenVerifyError as e:
+    # unauthenicatied request
+    app.logger.debug(e)
+    app.logger.debug("unauthenicated")
+    data = HomeActivities.run()
+  return data, 200
 ```
+![JWT verification in process](https://github.com/lkiunga/aws-bootcamp-cruddur-2023/blob/main/journal/assets/week3-shows-session-play-with-cognito-id.png)
  - - - -
 # Homework Challenges
 ## Improving UI Contrast and Implementing CSS Variables for Theming 
