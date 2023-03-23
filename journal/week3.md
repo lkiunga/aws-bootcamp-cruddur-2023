@@ -1,5 +1,5 @@
 # Week 3 — Decentralized Authentication
-
+Decentralized authentication means authentication is performed by multiple parties rather than a single central authority.
 ## Amazon Cognito
 **Amazon Cognito** is a cloud-based authentication, authorization, and user management service provided by Amazon Web Services (AWS). It is designed to help developers build web and mobile applications that require user sign-up, sign-in, and access control.</br>
 
