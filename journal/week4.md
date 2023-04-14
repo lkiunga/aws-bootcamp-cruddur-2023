@@ -68,4 +68,94 @@ We can create the database within the PSQL client
 ```sql
 CREATE database cruddur;
 ```
+Create a new db folder on the `backend` directory. Add a file `schema.sql`.
 
+Add the following to the schema ID
+
+  1. Add UUID extension  - used to obsecure the user unique identify which enables us to hide the number of users in our application especially for       competitor marketing purpose.
+
+
+```sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+```
+To run the `schema.sql` run the following code on the backend directory folder
+```sql
+psql cruddur < db/schema.sql -h localhost -U postgres
+```
+To avoid typing in the password- setup the CONNECTION_URL variable for the local psql client
+```sh
+export CONNECTION_URL="postgresql://postgres:password@localhost:5432/cruddur"
+```
+To check whether it is working connect like this
+```sh
+psql $CONNECTION_URL 
+```
+#### Persist the ENV variable
+
+Using the command line: gp env - The gp CLI prints and modifies the persistent environment variables associated with your user for the current repository.
+```sh
+gp env CONNECTION_URL="postgresql://postgres:password@localhost:5432/cruddur"
+```
+To avoid typing in the password- setup the CONNECTION_URL variable for the Production env **AWS RDS Instance**
+  export PROD_CONNECTION_URL="postgresql://cruddurroot:input_your_own_password@cruddur-db-instance.c5at744wtgv6.us-east-1.rds.amazonaws.com:5432/cruddur"
+
+  gp env PROD_CONNECTION_URL="postgresql://cruddurroot:input_your_own_password@cruddur-db-instance.c5at744wtgv6.us-east-1.rds.amazonaws.com:5432/cruddur"
+
+## BASH Scripting
+Create a `bin` directory and add create the following files ` db-create, db-drop, db-schema-load`
+
+We will be creating scripts to create our database, drop the database and build the database schema.
+
+#### To make files executable 
+   1. add the bash link file 
+
+      Type the following on the shell `whereis bash` and copy the bash file and add it to the first line of the files inside the bin folder 
+      ```sh
+       #! /usr/bin/bash
+      ```
+  2. Change the file permission values
+
+      By executing the following command 
+      ```sh
+      chmod U+x db-create, db-drop, db-schema-load
+      ```
+      this turns the files into executable files
+  
+#### Upload the following to the db files created
+db-drop
+```sh
+#! /usr/bin/bash
+
+NO_DB_CONNECTION_URL=$(sed 's/\/cruddur//g' <<<"$CONNECTION_URL")
+psql $NO_DB_CONNECTION_URL -c "DROP DATABASE cruddur;"
+```
+db-create
+```sh
+#! /usr/bin/bash
+
+NO_DB_CONNECTION_URL=$(sed 's/\/cruddur//g' <<<"$CONNECTION_URL")
+psql $NO_DB_CONNECTION_URL -c "create database cruddur;"
+```
+db-schema-load
+```sh
+#echo "== db-schema-load"
+#Makes the 
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="db-schema-load"
+printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
+schema_path="$(realpath .)/db/schema.sql"
+
+echo $schema_path
+
+if [ "$1" = "prod" ]; then
+  echo "Running in production mode"
+  URL=$PROD_CONNECTION_URL
+else
+  URL=$CONNECTION_URL
+fi
+
+psql $URL cruddur < $schema_path
+```
+**insert image
