@@ -102,6 +102,34 @@ To avoid typing in the password- setup the CONNECTION_URL variable for the Produ
 
   gp env PROD_CONNECTION_URL="postgresql://cruddurroot:input_your_own_password@cruddur-db-instance.c5at744wtgv6.us-east-1.rds.amazonaws.com:5432/cruddur"
 
+Add the following to the `schema.sql` file
+```
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+DROP TABLE IF EXISTS public.users;
+DROP TABLE IF EXISTS public.activities;
+
+CREATE TABLE public.users (
+  uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  display_name text,
+  handle text,
+  cognito_user_id text,
+  created_at TIMESTAMP default current_timestamp NOT NULL
+);
+
+CREATE TABLE public.activities (
+  uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_uuid UUID REFERENCES public.users(uuid) NOT NULL,
+  message text NOT NULL,
+  replies_count integer DEFAULT 0,
+  reposts_count integer DEFAULT 0,
+  likes_count integer DEFAULT 0,
+  reply_to_activity_uuid integer,
+  expires_at TIMESTAMP,
+  created_at TIMESTAMP default current_timestamp NOT NULL
+);
+```
+
+
 ## BASH Scripting
 Create a `bin` directory and add create the following files ` db-create, db-drop, db-schema-load`
 
@@ -159,3 +187,79 @@ fi
 psql $URL cruddur < $schema_path
 ```
 **insert image
+
+db-connect - sql script to connect to the local database
+```
+#! /usr/bin/bash
+
+
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="db-connect"
+printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
+
+
+psql $CONNECTION_URL
+```
+db-schema-load - loads the db schema that will be used to build the table relationships
+```sh
+#! /usr/bin/bash
+
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="db-schema-load"
+printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
+
+schema_path="$(realpath .)/db/schema.sql"
+
+echo $schema_path
+
+if [ "$1" = "prod" ]; then
+  echo "Running in production mode"
+  URL=$PROD_CONNECTION_URL
+else
+  URL=$CONNECTION_URL
+fi
+
+psql $URL cruddur < $schema_path
+```
+db-seed - script to insert data to the tables
+```
+#! /usr/bin/bash
+
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="db-seed"
+printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
+
+seed_path="$(realpath .)/db/seed.sql"
+
+echo $seed_path
+
+if [ "$1" = "prod" ]; then
+  echo "Running in production mode"
+  URL=$PROD_CONNECTION_URL
+else
+  URL=$CONNECTION_URL
+fi
+
+psql $URL cruddur < $seed_path
+```
+On the `db` directory create a file called `seed.sql`
+
+add the following code to it
+```
+-- this file was manually created
+INSERT INTO public.users (display_name, handle, cognito_user_id)
+VALUES
+  ('Andrew Brown', 'andrewbrown' ,'MOCK'),
+  ('Andrew Bayko', 'bayko' ,'MOCK');
+
+INSERT INTO public.activities (user_uuid, message, expires_at)
+VALUES
+  (
+    (SELECT uuid from public.users WHERE users.handle = 'andrewbrown' LIMIT 1),
+    'This was imported as seed data!',
+    current_timestamp + interval '10 day'
+  )
+```
